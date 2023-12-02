@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_example/misc/tile_providers.dart';
 import 'package:flutter_map_example/widgets/drawer/menu_drawer.dart';
-import 'package:latlong2/latlong.dart';
 
 class SecondaryTapPage extends StatelessWidget {
   const SecondaryTapPage({super.key});
@@ -28,7 +27,7 @@ class SecondaryTapPage extends StatelessWidget {
                     SnackBar(content: Text('Secondary tap at $latLng')),
                   );
                 },
-                initialCenter: const LatLng(51.5, -0.09),
+                initialCenter: const (lat: 51.5, lon: 0.09),
                 initialZoom: 5,
               ),
               children: [openStreetMapTileLayer],

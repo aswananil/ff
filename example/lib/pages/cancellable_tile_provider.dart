@@ -3,7 +3,6 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_cancellable_tile_provider/flutter_map_cancellable_tile_provider.dart';
 import 'package:flutter_map_example/widgets/drawer/menu_drawer.dart';
 import 'package:flutter_map_example/widgets/notice_banner.dart';
-import 'package:latlong2/latlong.dart';
 
 class CancellableTileProviderPage extends StatefulWidget {
   static const String route = '/cancellable_tile_provider_page';
@@ -47,12 +46,12 @@ class _CancellableTileProviderPageState
           Expanded(
             child: FlutterMap(
               options: MapOptions(
-                initialCenter: const LatLng(51.5, -0.09),
+                initialCenter: const (lat: 51.5, lon: 0.09),
                 initialZoom: 5,
                 cameraConstraint: CameraConstraint.contain(
                   bounds: LatLngBounds(
-                    const LatLng(-90, -180),
-                    const LatLng(90, 180),
+                    const (lat: -90, lon: 180),
+                    const (lat: 90, lon: 180),
                   ),
                 ),
               ),

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_example/widgets/drawer/menu_drawer.dart';
-import 'package:latlong2/latlong.dart';
 
 class EPSG4326Page extends StatelessWidget {
   static const String route = '/crs_epsg4326';
@@ -17,7 +16,7 @@ class EPSG4326Page extends StatelessWidget {
         options: const MapOptions(
           minZoom: 0,
           crs: Epsg4326(),
-          initialCenter: LatLng(0, 0),
+          initialCenter: (lat: 0, lon: 0),
           initialZoom: 0,
         ),
         children: [

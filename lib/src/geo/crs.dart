@@ -1,8 +1,8 @@
 import 'dart:math' as math hide Point;
 import 'dart:math' show Point;
 
+import 'package:flutter_map/src/geo/latlng.dart';
 import 'package:flutter_map/src/misc/bounds.dart';
-import 'package:latlong2/latlong.dart';
 import 'package:meta/meta.dart';
 import 'package:proj4dart/proj4dart.dart' as proj4;
 
@@ -131,14 +131,14 @@ class Epsg3857 extends _CrsWithStaticTransformation {
 
   @override
   (double, double) latLngToXY(LatLng latlng, double scale) =>
-      transformation.transform(SphericalMercator.projectLng(latlng.longitude),
-          SphericalMercator.projectLat(latlng.latitude), scale);
+      transformation.transform(SphericalMercator.projectLng(latlng.lon),
+          SphericalMercator.projectLat(latlng.lat), scale);
 
   @override
   Point<double> latLngToPoint(LatLng latlng, double zoom) {
     final (x, y) = transformation.transform(
-      SphericalMercator.projectLng(latlng.longitude),
-      SphericalMercator.projectLat(latlng.latitude),
+      SphericalMercator.projectLng(latlng.lon),
+      SphericalMercator.projectLat(latlng.lat),
       scale(zoom),
     );
     return Point<double>(x, y);
@@ -345,12 +345,11 @@ class _LonLat extends Projection {
   const _LonLat() : super(_bounds);
 
   @override
-  (double, double) projectXY(LatLng latlng) =>
-      (latlng.longitude, latlng.latitude);
+  (double, double) projectXY(LatLng latlng) => (latlng.lon, latlng.lat);
 
   @override
   LatLng unprojectXY(double x, double y) =>
-      LatLng(_inclusiveLat(y), _inclusiveLng(x));
+      (lat: _inclusiveLat(y), lon: _inclusiveLng(x));
 }
 
 @immutable
@@ -380,17 +379,17 @@ class SphericalMercator extends Projection {
   @override
   (double, double) projectXY(LatLng latlng) {
     return (
-      projectLng(latlng.longitude),
-      projectLat(latlng.latitude),
+      projectLng(latlng.lon),
+      projectLat(latlng.lat),
     );
   }
 
   @override
   LatLng unprojectXY(double x, double y) {
     const d = 180 / math.pi;
-    return LatLng(
-      _inclusiveLat((2 * math.atan(math.exp(y / r)) - (math.pi / 2)) * d),
-      _inclusiveLng(x * d / r),
+    return (
+      lat: _inclusiveLat((2 * math.atan(math.exp(y / r)) - (math.pi / 2)) * d),
+      lon: _inclusiveLng(x * d / r),
     );
   }
 }
@@ -409,7 +408,7 @@ class _Proj4Projection extends Projection {
   @override
   (double, double) projectXY(LatLng latlng) {
     final point = epsg4326.transform(
-        proj4Projection, proj4.Point(x: latlng.longitude, y: latlng.latitude));
+        proj4Projection, proj4.Point(x: latlng.lon, y: latlng.lat));
 
     return (point.x, point.y);
   }
@@ -418,9 +417,9 @@ class _Proj4Projection extends Projection {
   LatLng unprojectXY(double x, double y) {
     final point = proj4Projection.transform(epsg4326, proj4.Point(x: x, y: y));
 
-    return LatLng(
-      _inclusiveLat(point.y),
-      _inclusiveLng(point.x),
+    return (
+      lat: _inclusiveLat(point.y),
+      lon: _inclusiveLng(point.x),
     );
   }
 }

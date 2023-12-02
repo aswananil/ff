@@ -5,7 +5,6 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_example/misc/tile_providers.dart';
 import 'package:flutter_map_example/widgets/drawer/menu_drawer.dart';
-import 'package:latlong2/latlong.dart';
 
 class LatLngToScreenPointPage extends StatefulWidget {
   static const String route = '/latlng_to_screen_point';
@@ -45,7 +44,7 @@ class _LatLngToScreenPointPageState extends State<LatLngToScreenPointPage> {
           FlutterMap(
             mapController: mapController,
             options: MapOptions(
-              initialCenter: const LatLng(51.5, -0.09),
+              initialCenter: const (lat: 51.5, lon: 0.09),
               initialZoom: 11,
               interactionOptions: const InteractionOptions(
                 flags: ~InteractiveFlag.doubleTapZoom,

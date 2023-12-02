@@ -6,7 +6,6 @@ import 'package:flutter_map_example/misc/tile_providers.dart';
 import 'package:flutter_map_example/widgets/drawer/floating_menu_button.dart';
 import 'package:flutter_map_example/widgets/drawer/menu_drawer.dart';
 import 'package:flutter_map_example/widgets/first_start_dialog.dart';
-import 'package:latlong2/latlong.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -34,12 +33,12 @@ class _HomePageState extends State<HomePage> {
         children: [
           FlutterMap(
             options: MapOptions(
-              initialCenter: const LatLng(51.5, -0.09),
+              initialCenter: const (lat: 51.5, lon: 0.09),
               initialZoom: 5,
               cameraConstraint: CameraConstraint.contain(
                 bounds: LatLngBounds(
-                  const LatLng(-90, -180),
-                  const LatLng(90, 180),
+                  const (lat: -90, lon: 180),
+                  const (lat: 90, lon: 180),
                 ),
               ),
             ),

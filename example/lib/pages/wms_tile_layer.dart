@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_example/widgets/drawer/menu_drawer.dart';
-import 'package:latlong2/latlong.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class WMSLayerPage extends StatelessWidget {
@@ -16,7 +15,7 @@ class WMSLayerPage extends StatelessWidget {
       drawer: const MenuDrawer(route),
       body: FlutterMap(
         options: const MapOptions(
-          initialCenter: LatLng(42.58, 12.43),
+          initialCenter: (lat: 42.58, lon: 12.43),
           initialZoom: 6,
         ),
         children: [

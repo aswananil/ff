@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_example/misc/tile_providers.dart';
 import 'package:flutter_map_example/widgets/drawer/menu_drawer.dart';
-import 'package:latlong2/latlong.dart';
 
 class StatefulMarkersPage extends StatefulWidget {
   static const String route = '/stateful_markers';
@@ -40,8 +39,10 @@ class StatefulMarkersPageState extends State<StatefulMarkersPage> {
       Marker(
         width: 40,
         height: 40,
-        point: LatLng(
-            _random.nextDouble() * 10 + 48, _random.nextDouble() * 10 - 6),
+        point: (
+          lat: _random.nextDouble() * 10 + 48,
+          lon: _random.nextDouble() * 10 - 6
+        ),
         child: _ColorMarker(),
         key: ValueKey(key),
       ),
@@ -55,7 +56,7 @@ class StatefulMarkersPageState extends State<StatefulMarkersPage> {
       drawer: const MenuDrawer(StatefulMarkersPage.route),
       body: FlutterMap(
         options: const MapOptions(
-          initialCenter: LatLng(51.5, -0.09),
+          initialCenter: (lat: 51.5, lon: 0.09),
           initialZoom: 5,
         ),
         children: [

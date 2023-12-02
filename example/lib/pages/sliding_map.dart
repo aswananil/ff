@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_example/widgets/drawer/menu_drawer.dart';
-import 'package:latlong2/latlong.dart';
 
 class SlidingMapPage extends StatelessWidget {
   static const String route = '/sliding_map';
-  static const northEast = LatLng(56.7378, 11.6644);
-  static const southWest = LatLng(56.6877, 11.5089);
+  static const northEast = (lat: 56.7378, lon: 11.6644);
+  static const southWest = (lat: 56.6877, lon: 11.5089);
 
   const SlidingMapPage({super.key});
 
@@ -27,7 +26,7 @@ class SlidingMapPage extends StatelessWidget {
           Flexible(
             child: FlutterMap(
               options: MapOptions(
-                initialCenter: const LatLng(56.704173, 11.543808),
+                initialCenter: const (lat: 56.704173, lon: 11.543808),
                 minZoom: 12,
                 maxZoom: 14,
                 initialZoom: 13,

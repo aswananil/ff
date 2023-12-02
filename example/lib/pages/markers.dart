@@ -1,8 +1,9 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_example/misc/tile_providers.dart';
 import 'package:flutter_map_example/widgets/drawer/menu_drawer.dart';
-import 'package:latlong2/latlong.dart';
 
 class MarkerPage extends StatefulWidget {
   static const String route = '/markers';
@@ -30,8 +31,8 @@ class _MarkerPageState extends State<MarkerPage> {
   };
 
   late final customMarkers = <Marker>[
-    buildPin(const LatLng(51.51868093513547, -0.12835376940892318)),
-    buildPin(const LatLng(53.33360293799854, -6.284001062079881)),
+    buildPin(const (lat: 51.51868093513547, lon: 0.12835376940892318)),
+    buildPin(const (lat: 53.33360293799854, lon: 6.284001062079881)),
   ];
 
   Marker buildPin(LatLng point) => Marker(
@@ -108,7 +109,7 @@ class _MarkerPageState extends State<MarkerPage> {
           Flexible(
             child: FlutterMap(
               options: MapOptions(
-                initialCenter: const LatLng(51.5, -0.09),
+                initialCenter: const (lat: 51.5, lon: 0.09),
                 initialZoom: 5,
                 onTap: (_, p) => setState(() => customMarkers.add(buildPin(p))),
                 interactionOptions: const InteractionOptions(
@@ -121,7 +122,7 @@ class _MarkerPageState extends State<MarkerPage> {
                   rotate: counterRotate,
                   markers: const [
                     Marker(
-                      point: LatLng(47.18664724067855, -1.5436768515939427),
+                      point: (lat: 47.18664724067855, lon: 1.5436768515939427),
                       width: 64,
                       height: 64,
                       alignment: Alignment.centerLeft,
@@ -134,7 +135,7 @@ class _MarkerPageState extends State<MarkerPage> {
                       ),
                     ),
                     Marker(
-                      point: LatLng(47.18664724067855, -1.5436768515939427),
+                      point: (lat: 47.18664724067855, lon: 1.5436768515939427),
                       width: 64,
                       height: 64,
                       alignment: Alignment.centerRight,
@@ -147,7 +148,7 @@ class _MarkerPageState extends State<MarkerPage> {
                       ),
                     ),
                     Marker(
-                      point: LatLng(47.18664724067855, -1.5436768515939427),
+                      point: (lat: 47.18664724067855, lon: 1.5436768515939427),
                       rotate: false,
                       child: ColoredBox(color: Colors.black),
                     ),

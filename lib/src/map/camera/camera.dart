@@ -3,12 +3,12 @@ import 'dart:math' show Point;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_map/src/geo/crs.dart';
+import 'package:flutter_map/src/geo/latlng.dart';
 import 'package:flutter_map/src/geo/latlng_bounds.dart';
 import 'package:flutter_map/src/map/inherited_model.dart';
 import 'package:flutter_map/src/map/options/options.dart';
 import 'package:flutter_map/src/misc/bounds.dart';
 import 'package:flutter_map/src/misc/point_extensions.dart';
-import 'package:latlong2/latlong.dart';
 import 'package:vector_math/vector_math_64.dart';
 
 /// Describes the view of a map. This includes the size/zoom/position/crs as
@@ -203,8 +203,8 @@ class MapCamera {
     return Point<double>(width, height);
   }
 
-  /// The current rotation value in radians
-  double get rotationRad => rotation * degrees2Radians;
+  /// The current rotation value in radians.
+  double get rotationRad => degrees2Radians * rotation;
 
   /// Calculates point value for the given [latLng] using this camera's
   /// [crs] and [zoom] (or the provided [zoom]).

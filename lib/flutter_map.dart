@@ -17,6 +17,7 @@
 library flutter_map;
 
 export 'package:flutter_map/src/geo/crs.dart';
+export 'package:flutter_map/src/geo/latlng.dart';
 export 'package:flutter_map/src/geo/latlng_bounds.dart';
 export 'package:flutter_map/src/gestures/interactive_flag.dart';
 export 'package:flutter_map/src/gestures/latlng_tween.dart';

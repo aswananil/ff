@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_example/misc/tile_providers.dart';
 import 'package:flutter_map_example/widgets/drawer/menu_drawer.dart';
-import 'package:latlong2/latlong.dart';
 
 class InteractiveFlagsPage extends StatefulWidget {
   static const String route = '/interactive_flags_page';
@@ -118,7 +117,7 @@ class _InteractiveFlagsPageState extends State<InteractiveFlagsPage> {
               child: FlutterMap(
                 options: MapOptions(
                   onMapEvent: (evt) => setState(() => _latestEvent = evt),
-                  initialCenter: const LatLng(51.5, -0.09),
+                  initialCenter: const (lat: 51.5, lon: 0.09),
                   initialZoom: 11,
                   interactionOptions: InteractionOptions(
                     flags: flags,

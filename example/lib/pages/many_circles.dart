@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_example/misc/tile_providers.dart';
 import 'package:flutter_map_example/widgets/drawer/menu_drawer.dart';
-import 'package:latlong2/latlong.dart';
 
 const maxCirclesCount = 20000;
 
@@ -36,9 +35,9 @@ class ManyCirclesPageState extends State<ManyCirclesPage> {
       for (var x = 0; x < maxCirclesCount; x++) {
         allCircles.add(
           CircleMarker(
-            point: LatLng(
-              doubleInRange(r, 37, 55),
-              doubleInRange(r, -9, 30),
+            point: (
+              lat: doubleInRange(r, 37, 55),
+              lon: doubleInRange(r, -9, 30),
             ),
             color: Colors.red,
             radius: 5,
@@ -71,7 +70,7 @@ class ManyCirclesPageState extends State<ManyCirclesPage> {
           Flexible(
             child: FlutterMap(
               options: const MapOptions(
-                initialCenter: LatLng(50, 20),
+                initialCenter: (lat: 50, lon: 20),
                 initialZoom: 5,
                 interactionOptions: InteractionOptions(
                   flags: InteractiveFlag.all - InteractiveFlag.rotate,

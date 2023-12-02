@@ -3,7 +3,6 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_cancellable_tile_provider/flutter_map_cancellable_tile_provider.dart';
 import 'package:flutter_map_example/widgets/drawer/menu_drawer.dart';
 import 'package:flutter_map_example/widgets/notice_banner.dart';
-import 'package:latlong2/latlong.dart';
 
 class FallbackUrlPage extends StatelessWidget {
   static const String route = '/fallback_url';
@@ -33,7 +32,7 @@ class FallbackUrlPage extends StatelessWidget {
           Flexible(
             child: FlutterMap(
               options: const MapOptions(
-                initialCenter: LatLng(51.5, -0.09),
+                initialCenter: (lat: 51.5, lon: 0.09),
                 initialZoom: 5,
               ),
               children: [

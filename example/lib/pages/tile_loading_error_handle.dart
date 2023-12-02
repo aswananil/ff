@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_cancellable_tile_provider/flutter_map_cancellable_tile_provider.dart';
 import 'package:flutter_map_example/widgets/drawer/menu_drawer.dart';
-import 'package:latlong2/latlong.dart';
 
 class TileLoadingErrorHandle extends StatefulWidget {
   static const String route = '/tile_loading_error_handle';
@@ -39,7 +38,7 @@ class TileLoadingErrorHandleState extends State<TileLoadingErrorHandle> {
             child: Builder(builder: (context) {
               return FlutterMap(
                 options: const MapOptions(
-                  initialCenter: LatLng(51.5, -0.09),
+                  initialCenter: (lat: 51.5, lon: 0.09),
                   initialZoom: 5,
                 ),
                 children: [
