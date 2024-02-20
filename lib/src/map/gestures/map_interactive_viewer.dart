@@ -42,6 +42,7 @@ class MapInteractiveViewerState extends State<MapInteractiveViewer>
   DragGestureService? _drag;
   DoubleTapDragZoomGestureService? _doubleTapDragZoom;
   KeyTriggerDragRotateGestureService? _keyTriggerDragRotate;
+  KeyTriggerClickRotateGestureService? _keyTriggerClickRotate;
 
   MapControllerImpl get _controller => widget.controller;
 
@@ -105,6 +106,7 @@ class MapInteractiveViewerState extends State<MapInteractiveViewer>
         _drag != null ||
         _doubleTapDragZoom != null ||
         _twoFingerInput != null;
+    final useTapCallback = _tap != null || _keyTriggerClickRotate != null;
 
     return Listener(
       onPointerDown: (event) {
@@ -166,9 +168,39 @@ class MapInteractiveViewerState extends State<MapInteractiveViewer>
       onPointerPanZoomEnd: _trackpadZoom?.end,
 
       child: GestureDetector(
-        onTapDown: _tap?.setDetails,
-        onTapCancel: _tap?.reset,
-        onTap: _tap?.submit,
+        onTapDown: useTapCallback
+            ? (details) {
+                if (_keyTriggerClickRotate?.keyPressed ?? false) {
+                  _keyTriggerClickRotate!.setDetails(details);
+                  return;
+                }
+                _tap?.setDetails(details);
+              }
+            : null,
+        onTapCancel: useTapCallback
+            ? () {
+                if (_keyTriggerClickRotate?.isActive ?? false) {
+                  _keyTriggerClickRotate!.reset();
+                  return;
+                }
+                _tap?.reset();
+              }
+            : null,
+        onTap: useTapCallback
+            ? () {
+                if (_keyTriggerClickRotate?.keyPressed ?? false) {
+                  // Normally we would wait until the tap gesture is confirmed.
+                  // For this gesture however we call it directly for faster
+                  // response time. (Note that `onTap` still has a small delay)
+                  // This however has the trade-off that the gesture could turn
+                  // out to be a double click and both gesture would fire.
+                  final screenSize = MediaQuery.sizeOf(context);
+                  _keyTriggerClickRotate!.submit(screenSize);
+                  return;
+                }
+                _tap?.submit();
+              }
+            : null,
 
         onLongPressStart: _longPress?.submit,
 
@@ -208,7 +240,8 @@ class MapInteractiveViewerState extends State<MapInteractiveViewer>
         onScaleStart: useScaleCallback
             ? (details) {
                 if (_keyTriggerDragRotate?.keyPressed ?? false) {
-                  _keyTriggerDragRotate!.start();
+                  final screenSize = MediaQuery.sizeOf(context);
+                  _keyTriggerDragRotate!.start(screenSize);
                 } else if (_doubleTapDragZoom?.isActive ?? false) {
                   _doubleTapDragZoom!.start(details);
                 } else if (details.pointerCount == 1) {
@@ -295,6 +328,13 @@ class MapInteractiveViewerState extends State<MapInteractiveViewer>
           KeyTriggerDragRotateGestureService(controller: _controller);
     } else {
       _keyTriggerDragRotate = null;
+    }
+
+    if (newGestures.keyTriggerClickRotate) {
+      _keyTriggerClickRotate =
+          KeyTriggerClickRotateGestureService(controller: _controller);
+    } else {
+      _keyTriggerClickRotate = null;
     }
 
     if (newGestures.doubleTapDragZoom) {

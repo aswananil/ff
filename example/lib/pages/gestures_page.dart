@@ -29,6 +29,7 @@ class _GesturesPageState extends State<GesturesPage> {
     'Rotation': {
       InteractiveFlag.twoFingerRotate: 'Twist',
       InteractiveFlag.keyTriggerDragRotate: 'CTRL+Drag',
+      InteractiveFlag.keyTriggerClickRotate: 'CTRL+Click',
     },
   };
 
@@ -47,7 +48,7 @@ class _GesturesPageState extends State<GesturesPage> {
         child: Column(
           children: [
             Flex(
-              direction: screenWidth >= 750 ? Axis.horizontal : Axis.vertical,
+              direction: screenWidth >= 850 ? Axis.horizontal : Axis.vertical,
               mainAxisSize: MainAxisSize.max,
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: availableFlags.entries

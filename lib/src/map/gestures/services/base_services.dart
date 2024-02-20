@@ -5,10 +5,12 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:vector_math/vector_math.dart';
 
 part 'double_tap.dart';
 part 'double_tap_drag_zoom.dart';
 part 'drag.dart';
+part 'key_trigger_click_rotate.dart';
 part 'key_trigger_drag_rotate.dart';
 part 'long_press.dart';
 part 'scroll_wheel_zoom.dart';
@@ -75,4 +77,23 @@ Offset _rotateOffset(MapCamera camera, Offset offset) {
   final ny = (cos * offset.dy) - (sin * offset.dx);
 
   return Offset(nx, ny);
+}
+
+/// Get the Rotation in degrees in relation to the cursor position.
+///
+/// By clicking at the top of the map the map gets set to 0°-ish, by clicking
+/// on the left side of the map the rotation is set to 270°-ish.
+///
+/// Calculation thanks to
+/// https://stackoverflow.com/questions/48916517/javascript-click-and-drag-to-rotate
+double _getCursorRotationDegrees(
+  Size screenSize,
+  Offset cursorOffset,
+) {
+  const degreesCorrection = 180;
+  final degrees = -math.atan2(cursorOffset.dx - screenSize.width / 2,
+          cursorOffset.dy - screenSize.height / 2) *
+      radians2Degrees;
+
+  return degrees + degreesCorrection;
 }
