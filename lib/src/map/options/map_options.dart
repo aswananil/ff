@@ -7,41 +7,8 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map/src/map/inherited_model.dart';
 import 'package:latlong2/latlong.dart';
 
-/// Callback to notify when the map emits a [MapEvent].
-typedef MapEventCallback = void Function(MapEvent);
-
-/// Callback to notify when the map registers a confirmed short tap gesture.
-typedef TapCallback = void Function(TapPosition tapPosition, LatLng point);
-
-/// Callback to notify when the map emits long-press gesture
-typedef LongPressCallback = void Function(
-  TapPosition tapPosition,
-  LatLng point,
-);
-
-/// Callback to notify when the map registers a pointer down event.
-typedef PointerDownCallback = void Function(
-  PointerDownEvent event,
-  LatLng point,
-);
-
-/// Callback to notify when the map registers a pointer up event.
-typedef PointerUpCallback = void Function(PointerUpEvent event, LatLng point);
-
-/// Callback to notify when the map registers a pointer cancel event.
-typedef PointerCancelCallback = void Function(
-  PointerCancelEvent event,
-  LatLng point,
-);
-
-/// Callback to notify when the map registers a pointer hover event.
-typedef PointerHoverCallback = void Function(
-  PointerHoverEvent event,
-  LatLng point,
-);
-typedef PositionCallback = void Function(MapCamera camera, bool hasGesture);
-
-/// All options for the [FlutterMap] widget.
+/// The map options are used to configure the map settings.
+/// It gets provided to the map widget as the [FlutterMap.options] parameter.
 @immutable
 class MapOptions {
   /// The Coordinate Reference System, defaults to [Epsg3857].
@@ -74,44 +41,64 @@ class MapOptions {
   /// yellow grey-ish color.
   final Color backgroundColor;
 
-  /// Callback that fires when the map gets tapped or clicked with the
-  /// primary mouse button. This is normally the left mouse button. This
-  /// callback does not fire if the gesture is recognized as a double click.
+  /// Callback that gets called when the user has performed a confirmed single
+  /// tap or click on the map. If double tap gestures are enabled in
+  /// [InteractionOptions.gestures], the callback waits until the
+  /// double-tap delay has passed by and the tap gesture is confirmed.
   final TapCallback? onTap;
 
-  /// Callback that fires when the map gets tapped or clicked with the
-  /// secondary mouse button. This is normally the right mouse button.
-  final TapCallback? onSecondaryTap;
-
-  /// Callback that fires when the primary pointer has remained in contact with the
-  /// screen at the same location for a long period of time.
+  /// Callback that gets called when the user has performed a confirmed
+  /// long press on the map.
   final LongPressCallback? onLongPress;
 
-  /// A pointer that might cause a tap has contacted the screen at a
-  /// particular location.
-  final PointerDownCallback? onPointerDown;
+  /// Callback that gets called when the user has performed a confirmed
+  /// single secondary tap or click on the map. This is for example when the
+  /// user clicks with the right mouse button.
+  final TapCallback? onSecondaryTap;
 
-  /// A pointer that triggers a tap has stopped contacting the screen at a
-  /// particular location.
-  final PointerUpCallback? onPointerUp;
+  /// Callback that gets called when the user has performed a confirmed
+  /// long press on the map with the secondary pointer.
+  final LongPressCallback? onSecondaryLongPress;
 
-  /// This callback fires when the pointer that previously triggered the
-  /// onTapDown won’t end up causing a tap.
-  final PointerCancelCallback? onPointerCancel;
+  /// Callback that gets called when the user has performed a confirmed
+  /// tap or click with the tertiary pointer. This is for example by clicking
+  /// on the scroll wheel of the mouse.
+  final TapCallback? onTertiaryTap;
 
-  /// Called when a pointer that has not triggered an onPointerDown
-  /// changes position.
-  /// This is only fired for pointers which report their location when not
-  /// down (e.g. mouse pointers, but not most touch pointers)
-  final PointerHoverCallback? onPointerHover;
+  /// Callback that gets called when the user has performed a confirmed
+  /// long press using the tertiary pointer. This is for example by
+  /// long pressing the scroll wheel of the mouse.
+  final LongPressCallback? onTertiaryLongPress;
 
-  /// This callback fires when the [MapCamera] data has changed. This gets
-  /// called if the zoom level, or map center changes.
-  final PositionCallback? onPositionChanged;
+  /// Callback that gets called when internal
+  /// [Listener.onPointerDown] callback fires. Useful for custom or advanced
+  /// gesture handling.
+  final void Function(PointerDownEvent event, LatLng point)? onPointerDown;
 
-  /// This callback fires on every map event that gets emitted. Check the type
-  /// of [MapEvent] to distinguish between the different event types.
-  final MapEventCallback? onMapEvent;
+  /// Callback that gets called when internal
+  /// [Listener.onPointerUp] callback fires. Useful for custom or advanced
+  /// gesture handling.
+  final void Function(PointerUpEvent event, LatLng point)? onPointerUp;
+
+  /// Callback that gets called when internal
+  /// [Listener.onPointerCancel] callback fires. Useful for custom or advanced
+  /// gesture handling.
+  final void Function(PointerCancelEvent event, LatLng point)? onPointerCancel;
+
+  /// Callback that gets called when internal
+  /// [Listener.onPointerHover] callback fires. Useful for custom or advanced
+  /// gesture handling.
+  final void Function(PointerHoverEvent event, LatLng point)? onPointerHover;
+
+  /// Callback that gets called when the [MapCamera] changes position.
+  final void Function(MapCamera camera, bool hasGesture)? onPositionChanged;
+
+  /// Callback to listen for events emitted by the FlutterMap event system.
+  /// Every event is a subclass of [MapEvent]. Check its type to filter
+  /// for a specific event.
+  ///
+  /// Events for gestures are only emitted if the respective gesture is enabled.
+  final void Function(MapEvent event)? onMapEvent;
 
   /// Define limits for viewing the map.
   final CameraConstraint cameraConstraint;
@@ -121,13 +108,13 @@ class MapOptions {
   /// Only use this if your map isn't built immediately (like inside FutureBuilder)
   /// and you need to access the controller as soon as the map is built.
   /// Otherwise you can use WidgetsBinding.instance.addPostFrameCallback
-  /// In initState to controll the map before the next frame.
+  /// In initState to control the map before the next frame.
   final VoidCallback? onMapReady;
 
   /// Flag to enable the built in keep alive functionality
   ///
   /// If the map is within a complex layout, such as a [ListView] or [PageView],
-  /// the map will reset to it's inital position after it appears back into view.
+  /// the map will reset to it's initial position after it appears back into view.
   /// To ensure this doesn't happen, enable this flag to prevent the [FlutterMap]
   /// widget from rebuilding.
   final bool keepAlive;
@@ -174,7 +161,8 @@ class MapOptions {
   /// Gesture and input options for the map widget.
   final InteractionOptions interactionOptions;
 
-  /// Create the map options for [FlutterMap].
+  /// Create the map options for [FlutterMap]. Set custom options or override
+  /// default values.
   const MapOptions({
     this.crs = const Epsg3857(),
     this.initialCenter = const LatLng(50.5, 30.51),
@@ -187,8 +175,11 @@ class MapOptions {
     this.maxZoom,
     this.backgroundColor = const Color(0xFFE0E0E0),
     this.onTap,
-    this.onSecondaryTap,
     this.onLongPress,
+    this.onSecondaryTap,
+    this.onSecondaryLongPress,
+    this.onTertiaryTap,
+    this.onTertiaryLongPress,
     this.onPointerDown,
     this.onPointerUp,
     this.onPointerCancel,
@@ -273,3 +264,12 @@ class MapOptions {
         applyPointerTranslucencyToLayers,
       ]);
 }
+
+/// Callback function signature used by short taps
+typedef TapCallback = void Function(TapDownDetails details, LatLng point);
+
+/// Callback function signature used by long presses
+typedef LongPressCallback = void Function(
+  LongPressStartDetails details,
+  LatLng point,
+);

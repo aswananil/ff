@@ -2,72 +2,6 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:meta/meta.dart';
 
-/// Event sources which are used to identify different types of
-/// [MapEvent] events
-enum MapEventSource {
-  /// The [MapEvent] is caused programmatically by the [MapController].
-  mapController,
-
-  /// The [MapEvent] is caused by a tap gesture.
-  tap,
-
-  /// The [MapEvent] is caused by a secondary tap gesture.
-  secondaryTap,
-
-  /// The [MapEvent] is caused by a long press gesture.
-  longPress,
-
-  /// The [MapEvent] is caused by a double tap gesture.
-  doubleTap,
-
-  /// The [MapEvent] is caused by a double tap and hold gesture.
-  doubleTapHold,
-
-  /// The [MapEvent] is caused by the start of a drag gesture.
-  dragStart,
-
-  /// The [MapEvent] is caused by a drag update gesture.
-  onDrag,
-
-  /// The [MapEvent] is caused by the end of a drag gesture.
-  dragEnd,
-
-  /// The [MapEvent] is caused by the start of a two finger gesture.
-  multiFingerGestureStart,
-
-  /// The [MapEvent] is caused by a two finger gesture update.
-  onMultiFinger,
-
-  /// The [MapEvent] is caused by a the end of a two finger gesture.
-  multiFingerEnd,
-
-  /// The [MapEvent] is caused by the [AnimationController] while performing
-  /// the fling gesture.
-  flingAnimationController,
-
-  /// The [MapEvent] is caused by the [AnimationController] while performing
-  /// the double tap zoom in animation.
-  doubleTapZoomAnimationController,
-
-  /// The [MapEvent] is caused by a change of the interactive flags.
-  interactiveFlagsChanged,
-
-  /// The [MapEvent] is caused by calling fitCamera.
-  fitCamera,
-
-  /// The [MapEvent] is caused by a custom source.
-  custom,
-
-  /// The [MapEvent] is caused by a scroll wheel zoom gesture.
-  scrollWheel,
-
-  /// The [MapEvent] is caused by a size change of the [FlutterMap] constraints.
-  nonRotatedSizeChange,
-
-  /// The [MapEvent] is caused by a CTRL + drag rotation gesture.
-  cursorKeyboardRotation,
-}
-
 /// Base event class which is emitted by MapController instance, the event
 /// is usually related to performed gesture on the map itself or it can
 /// be an event related to map configuration
@@ -128,8 +62,14 @@ abstract class MapEventWithMove extends MapEvent {
             camera: camera,
             source: source,
           ),
+        MapEventSource.trackpad => MapEventTrackpadZoom(
+            oldCamera: oldCamera,
+            camera: camera,
+            source: source,
+          ),
         MapEventSource.onDrag ||
-        MapEventSource.onMultiFinger ||
+        MapEventSource.onTwoFinger ||
+        MapEventSource.doubleTapHold ||
         MapEventSource.mapController ||
         MapEventSource.custom =>
           MapEventMove(
@@ -170,6 +110,18 @@ class MapEventSecondaryTap extends MapEvent {
   });
 }
 
+@immutable
+class MapEventTertiaryTap extends MapEvent {
+  /// Point coordinates where user has tapped
+  final LatLng tapPosition;
+
+  const MapEventTertiaryTap({
+    required this.tapPosition,
+    required super.source,
+    required super.camera,
+  });
+}
+
 /// Event which is fired when map is long-pressed
 @immutable
 class MapEventLongPress extends MapEvent {
@@ -178,6 +130,33 @@ class MapEventLongPress extends MapEvent {
 
   /// Create a new map event that represents a long press on the map
   const MapEventLongPress({
+    required this.tapPosition,
+    required super.source,
+    required super.camera,
+  });
+}
+
+/// Event which is fired when map is long-pressed with the secondary button.
+@immutable
+class MapEventSecondaryLongPress extends MapEvent {
+  /// Point coordinates where user has long-pressed
+  final LatLng tapPosition;
+
+  const MapEventSecondaryLongPress({
+    required this.tapPosition,
+    required super.source,
+    required super.camera,
+  });
+}
+
+/// Event which is fired when map is long-pressed with the tertiary button
+/// (e.g. the mouse wheel is clicked).
+@immutable
+class MapEventTertiaryLongPress extends MapEvent {
+  /// Point coordinates where user has long-pressed
+  final LatLng tapPosition;
+
+  const MapEventTertiaryLongPress({
     required this.tapPosition,
     required super.source,
     required super.camera,
@@ -285,6 +264,16 @@ class MapEventScrollWheelZoom extends MapEventWithMove {
   });
 }
 
+/// Event which is fired when the trackpad of a device is used to zoom
+@immutable
+class MapEventTrackpadZoom extends MapEventWithMove {
+  const MapEventTrackpadZoom({
+    required super.source,
+    required super.oldCamera,
+    required super.camera,
+  });
+}
+
 /// Event which is fired when animation for double tap gesture is started
 @immutable
 class MapEventDoubleTapZoomStart extends MapEvent {
@@ -302,6 +291,24 @@ class MapEventDoubleTapZoomEnd extends MapEvent {
   /// Create a new map event that represents the end of a double tap
   /// zoom gesture.
   const MapEventDoubleTapZoomEnd({
+    required super.source,
+    required super.camera,
+  });
+}
+
+/// Event which is fired when animation for double tap gesture is started
+@immutable
+class MapEventDoubleTapDragZoomStart extends MapEvent {
+  const MapEventDoubleTapDragZoomStart({
+    required super.source,
+    required super.camera,
+  });
+}
+
+/// Event which is fired when animation for double tap gesture ends
+@immutable
+class MapEventDoubleTapDragZoomEnd extends MapEvent {
+  const MapEventDoubleTapDragZoomEnd({
     required super.source,
     required super.camera,
   });

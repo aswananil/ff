@@ -3,7 +3,7 @@ import 'dart:math';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_map/flutter_map.dart';
-import 'package:flutter_map/src/gestures/map_interactive_viewer.dart';
+import 'package:flutter_map/src/map/gestures/map_interactive_viewer.dart';
 import 'package:flutter_map/src/map/inherited_model.dart';
 import 'package:logger/logger.dart';
 
@@ -138,7 +138,10 @@ class _FlutterMapStateContainer extends State<FlutterMap>
         _parentConstraintsAreSet(context, constraints)) {
       _initialCameraFitApplied = true;
 
-      _mapController.fitCamera(widget.options.initialCameraFit!);
+      _mapController.fitCameraRaw(
+        widget.options.initialCameraFit!,
+        source: MapEventSource.fitCamera,
+      );
     }
   }
 

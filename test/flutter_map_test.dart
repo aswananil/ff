@@ -215,7 +215,12 @@ class TestRebuildsApp extends StatefulWidget {
 class _TestRebuildsAppState extends State<TestRebuildsApp> {
   MapController _mapController = MapController();
   Crs _crs = const Epsg3857();
-  int _interactiveFlags = InteractiveFlag.all;
+
+  /// double tap gestures delay the tap gestures, disable them here
+  MapGestures _interactiveFlags = const MapGestures.all(
+    doubleTapZoomIn: false,
+    doubleTapDragZoom: false,
+  );
 
   @override
   void dispose() {
@@ -232,7 +237,7 @@ class _TestRebuildsAppState extends State<TestRebuildsApp> {
           options: MapOptions(
             crs: _crs,
             interactionOptions: InteractionOptions(
-              flags: _interactiveFlags,
+              gestures: _interactiveFlags,
             ),
           ),
           children: [
@@ -242,10 +247,9 @@ class _TestRebuildsAppState extends State<TestRebuildsApp> {
                 TextButton(
                   onPressed: () {
                     setState(() {
-                      _interactiveFlags =
-                          InteractiveFlag.hasDrag(_interactiveFlags)
-                              ? _interactiveFlags & ~InteractiveFlag.drag
-                              : InteractiveFlag.all;
+                      _interactiveFlags = _interactiveFlags.copyWith(
+                        drag: !_interactiveFlags.drag,
+                      );
                     });
                   },
                   child: const Text('Change flags'),

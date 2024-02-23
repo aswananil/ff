@@ -4,7 +4,6 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map/src/map/inherited_model.dart';
-import 'package:flutter_map/src/misc/move_and_rotate_result.dart';
 import 'package:latlong2/latlong.dart';
 
 /// Controller to programmatically interact with [FlutterMap], such as
@@ -103,9 +102,9 @@ abstract class MapController {
   /// The emitted [MapEventRotate.source]/[MapEventMove.source] properties will
   /// be [MapEventSource.mapController].
   ///
-  /// The operation was successful if both fields of the resulting record are
-  /// `true`.
-  MoveAndRotateResult rotateAroundPoint(
+  /// Returns `true` unless the [degree] parameter patches the
+  /// current [MapCamera.rotation] value.
+  bool rotateAroundPoint(
     double degree, {
     Point<double>? point,
     Offset? offset,
@@ -117,11 +116,12 @@ abstract class MapController {
   ///
   /// Does not support offsets or rotations around custom points.
   ///
-  /// See documentation on those methods for more details.
+  /// This method calls the internal [MapControllerImpl.moveAndRotateRaw]. The
+  /// emitted events will have [MapEventSource.mapController] as event source.
   ///
-  /// The operation was successful if both fields of the resulting record are
-  /// `true`.
-  MoveAndRotateResult moveAndRotate(
+  /// Returns `true` unless [center], [zoom] and [degree] matched the current
+  /// value in [MapCamera].
+  bool moveAndRotate(
     LatLng center,
     double zoom,
     double degree, {
@@ -129,6 +129,9 @@ abstract class MapController {
   });
 
   /// Move and zoom the map to fit [cameraFit].
+  ///
+  /// This method calls the internal [MapControllerImpl.fitCameraRaw]. The
+  /// emitted events will have [MapEventSource.mapController] as event source.
   ///
   /// For information about the return value and emitted events, see [move]'s
   /// documentation.

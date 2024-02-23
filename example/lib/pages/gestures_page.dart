@@ -4,35 +4,35 @@ import 'package:flutter_map_example/misc/tile_providers.dart';
 import 'package:flutter_map_example/widgets/drawer/menu_drawer.dart';
 import 'package:latlong2/latlong.dart';
 
-class InteractiveFlagsPage extends StatefulWidget {
-  static const String route = '/interactive_flags_page';
+class GesturesPage extends StatefulWidget {
+  static const String route = '/enabled_gestures_page';
 
-  const InteractiveFlagsPage({super.key});
+  const GesturesPage({super.key});
 
   @override
-  State createState() => _InteractiveFlagsPageState();
+  State createState() => _GesturesPageState();
 }
 
-class _InteractiveFlagsPageState extends State<InteractiveFlagsPage> {
+class _GesturesPageState extends State<GesturesPage> {
   static const availableFlags = {
     'Movement': {
       InteractiveFlag.drag: 'Drag',
-      InteractiveFlag.flingAnimation: 'Fling',
-      InteractiveFlag.pinchMove: 'Pinch',
+      InteractiveFlag.twoFingerMove: 'Two finger drag',
     },
     'Zooming': {
-      InteractiveFlag.pinchZoom: 'Pinch',
+      InteractiveFlag.twoFingerZoom: 'Pinch',
       InteractiveFlag.scrollWheelZoom: 'Scroll',
-      InteractiveFlag.doubleTapZoom: 'Double tap',
-      InteractiveFlag.doubleTapDragZoom: '+ drag',
+      InteractiveFlag.doubleTapZoomIn: 'Double tap',
+      InteractiveFlag.doubleTapDragZoom: 'Double tap+drag',
+      InteractiveFlag.trackpadZoom: 'Touchpad zoom',
     },
     'Rotation': {
-      InteractiveFlag.rotate: 'Twist',
+      InteractiveFlag.twoFingerRotate: 'Twist',
+      InteractiveFlag.keyTriggerDragRotate: 'CTRL+Drag',
     },
   };
 
-  int flags = InteractiveFlag.drag | InteractiveFlag.pinchZoom;
-  bool keyboardCursorRotate = false;
+  int flags = InteractiveFlag.drag | InteractiveFlag.twoFingerZoom;
 
   MapEvent? _latestEvent;
 
@@ -40,14 +40,14 @@ class _InteractiveFlagsPageState extends State<InteractiveFlagsPage> {
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.sizeOf(context).width;
     return Scaffold(
-      appBar: AppBar(title: const Text('Interactive Flags')),
-      drawer: const MenuDrawer(InteractiveFlagsPage.route),
+      appBar: AppBar(title: const Text('Input gestures')),
+      drawer: const MenuDrawer(GesturesPage.route),
       body: Padding(
         padding: const EdgeInsets.all(8),
         child: Column(
           children: [
             Flex(
-              direction: screenWidth >= 600 ? Axis.horizontal : Axis.vertical,
+              direction: screenWidth >= 750 ? Axis.horizontal : Axis.vertical,
               mainAxisSize: MainAxisSize.max,
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: availableFlags.entries
@@ -75,22 +75,10 @@ class _InteractiveFlagsPageState extends State<InteractiveFlagsPage> {
                                       setState(() => flags |= e.key);
                                     },
                                   ),
-                                  Text(e.value),
+                                  Text(e.value, textAlign: TextAlign.center),
                                 ],
                               ),
                             ),
-                            if (category.key == 'Rotation') ...[
-                              Column(
-                                children: [
-                                  Checkbox.adaptive(
-                                    value: keyboardCursorRotate,
-                                    onChanged: (enabled) => setState(
-                                        () => keyboardCursorRotate = enabled!),
-                                  ),
-                                  const Text('Cursor & CTRL'),
-                                ],
-                              ),
-                            ]
                           ].interleave(const SizedBox(width: 12)).toList()
                             ..removeLast(),
                         )
@@ -117,18 +105,11 @@ class _InteractiveFlagsPageState extends State<InteractiveFlagsPage> {
             Expanded(
               child: FlutterMap(
                 options: MapOptions(
-                  onMapEvent: (evt) => setState(() => _latestEvent = evt),
+                  onMapEvent: (event) => setState(() => _latestEvent = event),
                   initialCenter: const LatLng(51.5, -0.09),
                   initialZoom: 11,
                   interactionOptions: InteractionOptions(
-                    flags: flags,
-                    cursorKeyboardRotationOptions:
-                        CursorKeyboardRotationOptions(
-                      isKeyTrigger: (key) =>
-                          keyboardCursorRotate &&
-                          CursorKeyboardRotationOptions.defaultTriggerKeys
-                              .contains(key),
-                    ),
+                    gestures: MapGestures.bitfield(flags),
                   ),
                 ),
                 children: [openStreetMapTileLayer],
@@ -178,6 +159,12 @@ class _InteractiveFlagsPageState extends State<InteractiveFlagsPage> {
         return 'MapEventRotateEnd';
       case MapEventNonRotatedSizeChange():
         return 'MapEventNonRotatedSizeChange';
+      case MapEventSecondaryLongPress():
+        return 'MapEventSecondaryLongPress';
+      case MapEventTertiaryTap():
+        return 'MapEventTertiaryTap';
+      case MapEventTertiaryLongPress():
+        return 'MapEventTertiaryLongPress';
       case null:
         return 'null';
       default:

@@ -119,10 +119,14 @@ class _MarkerPageState extends State<MarkerPage> {
               options: MapOptions(
                 initialCenter: const LatLng(51.5, -0.09),
                 initialZoom: 5,
-                onTap: (_, p) => setState(() => customMarkers.add(buildPin(p))),
+                onTap: (_, p) {
+                  setState(() => customMarkers.add(buildPin(p)));
+                },
                 interactionOptions: const InteractionOptions(
-                  flags: ~InteractiveFlag.doubleTapZoom,
-                ),
+                    gestures: MapGestures.all(
+                  doubleTapDragZoom: false,
+                  doubleTapZoomIn: false,
+                )),
               ),
               children: [
                 openStreetMapTileLayer,
